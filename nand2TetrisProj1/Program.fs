@@ -20,7 +20,7 @@ let main argv =
     //let checkType command = 
       
 
-    
+    //translate a push command into HACK
     let pushHackCommand (lineOfCode:string) = 
         let hackCode = lineOfCode.Split([|" "|], StringSplitOptions.None)
         let sourceReg = hackCode.[1] //name of register 
@@ -37,19 +37,21 @@ let main argv =
         printf "\n"
 
 
-
+    //translate a pop command into HACK
     let popHackCommand (lineOfCode:string) = 
         let hackCode = lineOfCode.Split([|" "|], StringSplitOptions.None)
         let a = hackCode.[1]
         let b = hackCode.[2]
         printf "pop %A to %A\n" a b
 
+    //translate an add command into HACK
     let addHackCommand (lineOfCode:string) = 
        // let hackCode = lineOfCode.Split([|" "|], StringSplitOptions.None)
        // let a = hackCode.[1]
        // let b = hackCode.[2]
         printf "add\n"
 
+    //translate a sub command into HACK
     let subHackCommand (lineOfCode:string) = 
               printf "sub\n"
 
