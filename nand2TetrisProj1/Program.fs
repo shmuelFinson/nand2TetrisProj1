@@ -89,23 +89,55 @@ let main argv =
         printf "M=M+1\n"
 
     //push (pointer/temp) offset  - push #2
-    //let push_pointer_temp_offest(offest:string, )
-
-    //push static offset - push #3
-  
-    
-    //push constant value - push #4
-    let push_constant_value(value:string)=
-        let offset = value
-        printf "\n"
-        printf "//push constant %s\n" offset
+    let push_pointer_temp_offest(register:string, offset:string) = 
+        printf "'\n"
+        printf "//push @%s %s\n" register offset
         printf "@%s\n" offset
         printf "D=A\n"
+        //printf "@(3/5)\n"??
+        printf "A=A+D\n"
+        printf "D=M\n"
         printf "@SP\n"
         printf "A=M\n"
         printf "M=D\n"
         printf "@SP\n"
         printf "M=M+1\n"
+
+    //push static offset - push #3
+    let push_static_offset(value:string) =
+        let offset = value
+        let newLine = "\n"
+        let comment = "// push static " + offset + newLine
+        let atOffset = "@" + offset + newLine
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1")
+
+  
+    
+    //push constant value - push #4
+    let push_constant_value(value:string)=
+        let offset = value
+        let newLine = "\n"
+        let comment = "// push constant " + offset + newLine
+        let atOffset = "@" + offset + newLine
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)
+        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1\n")
 
         
 
@@ -125,12 +157,13 @@ let main argv =
                     |"this" -> push_Lcl_Arg_This_That_Offset (sourceReg, offset)
                     |"that" -> push_Lcl_Arg_This_That_Offset (sourceReg, offset)
                     |"constant" -> push_constant_value(offset)
+                    | "static" -> push_static_offset(offset)
                     |_ ->  printf "Unknown\n"
 
        
 
 
-    //translate a pop command into HACK
+   //there are several different types of pop commands, depending on the register - this function calls the appropriate pop function...
     let popHackCommandSorter (lineOfCode:string) = 
         let hackCode = lineOfCode.Split([|" "|], StringSplitOptions.None)
         let sourceReg = hackCode.[1]
@@ -145,50 +178,52 @@ let main argv =
                     |_ ->  printf "Unknown\n"
 
     //translate an add command into HACK
-    let addHackCommand (lineOfCode:string) = 
+    let add_2_hack (lineOfCode:string) = 
        // let hackCode = lineOfCode.Split([|" "|], StringSplitOptions.None)
        // let a = hackCode.[1]
        // let b = hackCode.[2]
-        printf "\n"
-        printf "//add\n"
-        printf "@SP\n"
-        printf "M=M-1\n"
-        printf "@SP\n"
-        printf "A=M\n"
-        printf "D=M\n"
-        printf "@SP\n"
-        printf "M=M-1\n"
-        printf "@SP\n"
-        printf "A=M\n"
-        printf "D=D+A\n"
-        printf "@SP\n"
-        printf "A=M\n"
-        printf "M=D\n"
-        printf "@SP\n"
-        printf "M=M+1\n"
+       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm" 
+,"\n
+//add
+@SP
+M=M-1
+@SP
+A=M
+D=M
+@SP
+M=M-1
+@SP
+A=M
+D=D+A
+@SP
+A=M
+M=D
+@SP
+M=M+1\n")
 
 
 
     //translate a sub command into HACK
-    let subHackCommand (lineOfCode:string) = 
-              printf "\n"
-              printf "//sub\n"
-              printf "@SP\n"
-              printf "M=M-1\n"
-              printf "@SP\n"
-              printf "A=M\n"
-              printf "D=M\n"
-              printf "@SP\n"
-              printf "M=M-1\n"
-              printf "@SP\n"
-              printf "A=M\n"
-              printf "A=M\n"
-              printf "D=A-D\n"
-              printf "@SP\n"
-              printf "A=M\n"
-              printf "M=D\n"
-              printf "@SP\n"
-              printf "M=M+1\n"
+    let sub_2_hack (lineOfCode:string) = 
+         File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"\n
+//sub
+@SP
+M=M-1
+@SP
+A=M
+D=M
+@SP
+M=M-1
+@SP
+A=M
+A=M
+D=A-D
+@SP
+A=M
+M=D
+@SP
+M=M+1")
               
 
     //read the file into a string
@@ -197,14 +232,13 @@ let main argv =
     let commands = Seq.toList lines
 
     //iterate over the lines in the file and call our functions for each line
-
     for command in commands do  //we have a string per line of code
         let firstWord = command.Split([|" "|], StringSplitOptions.None)  //get the first word in the string to determine what kind of command we're talking about
         match firstWord.[0] with
              |"push" ->  pushHackCommandSorter command
              |"pop" -> popHackCommandSorter command
-             |"add" -> addHackCommand command
-             |"sub" -> subHackCommand command
+             |"add" -> add_2_hack command
+             |"sub" -> sub_2_hack command
              |_ ->  printf "Unknown\n"
         
         
