@@ -67,12 +67,17 @@ M=D")
 
     //pop static offset - pop #3
     let pop_static_offset(currentFileName:string, offset:string) = 
-        printf "\n"
-        printf "//pop static %s\n" offset
-        printf "@SP\n"
-        printf "M=M-1\n"
-        printf "@SP\n"
-        printf "A=M\n"
+        let offset1 = offset.ToString()
+        let cooment = "//pop static " + offset1
+        let newLine = "/"
+        let sourceReg = currentFileName
+        let comment = "//pop static " + offset
+       File.AppendAllText( "C:\Users\Shmuel Finson\Desktop\experiment.asm",)
+       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",)
+       File.AppendAllText( "C:\Users\Shmuel Finson\Desktop\experiment.asm",)
+       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",)
+       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",)
+       File.AppendAllText( "C:\Users\Shmuel Finson\Desktop\experiment.asm",)
 
     //pop constant offset - pop #4
     let pop_constant_offset(offset:string) = 
@@ -209,6 +214,7 @@ M=M+1\n")
                     |"that" -> pop_segment_local_argument_this_that_offset (sourceReg, offset)
                     |"constant" -> pop_constant_offset(offset)
                     |"temp"-> pop_segment_pointer_temp_offset(sourceReg,offset)
+                    | "static" -> pop_static_offset(sourceReg,offset)
                     |_ ->  printf "Unknown\n"
 
     //translate an add command into HACK
@@ -266,7 +272,7 @@ M=-D\n")
               
        
     //read the file into a string
-    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\StackArithmetic\SimpleAdd\SimpleAdd.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
+    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
     // Convert file lines into a list.
     let commands = Seq.toList lines
 
