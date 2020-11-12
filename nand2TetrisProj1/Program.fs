@@ -94,9 +94,6 @@ M=M-1")
         printf "M=M-1\n"
         printf "@SP\n"
         printf "A=M\n"
-        printf "D=M\n"
-        printf "@currentfileName.off\n"
-        printf "M=D\n"
 
     //pop constant offset - pop #4
     let pop_constant_offset(offset:string) = 
@@ -273,14 +270,7 @@ M=M+1\n")
                     |"this" -> pop_segment_local_argument_this_that_offset (sourceReg, offset)
                     |"that" -> pop_segment_local_argument_this_that_offset (sourceReg, offset)
                     |"constant" -> pop_constant_offset(offset)
-                    |"temp"-> pop_segment_temp_offset(sourceReg,offset)
-                    |"pointer"
-                    |_->
-                      match offset with
-                      |"0"->pop_pointer0_offset(sourceReg, offset)
-                      |"1"->pop_pointer1_offset(sourceReg, offset)
-                    |_ ->  printf "Unknown\n"
-
+                    |"temp"-> pop_segment_pointer_temp_offset(sourceReg,offset)
                     |_ ->  printf "Unknown\n"
 
     //translate an add command into HACK
@@ -338,7 +328,7 @@ M=-D\n")
               
        
     //read the file into a string
-    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\StackArithmetic\SimpleAdd\SimpleAdd.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
+    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
     // Convert file lines into a list.
     let commands = Seq.toList lines
 
