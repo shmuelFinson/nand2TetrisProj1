@@ -6,12 +6,17 @@ open System.IO
 
   //pop segment(local/argument/this/that) offset  - pop #1
   let pop_segment_local_argument_this_that_offset(register:string, offset:string) =  
-      let offset1 = offset 
-      let Destregister = register 
+      let offset1 = offset
+      let reg = match register with
+      |"local" ->  "LCL"
+      |"argument" ->  "ARG"
+      |"this" ->  "THIS"
+      |"that" ->  "THAT"
+
       let newLine = "\n"
-      let comment = "//pop " + Destregister +  offset1 + newLine 
+      let comment = "//pop " + reg +  offset1 + newLine 
       let atOffset = "@"+ offset1 + "\n" 
-      let atRegister = "@" + Destregister + "\n"
+      let atRegister = "@" + reg + "\n"
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@SP\n")
@@ -32,40 +37,38 @@ M=D\n")
 
   //pop segment(temp) offset - pop #2
   let pop_segment_temp_offset(register:string, offset:string) = 
-      let destReg = register
-      let offset1 = offset
-      let newLine = "\n"
-      let atOffset = "@" + offset1 + newLine
-      let offNum = offset|>int
-      let offsetPlusFive = offNum + 5
-      let atoffsetPlusFive = "@" + offsetPlusFive.ToString() + newLine
-      let comment = "//pop " + destReg + " " + offset1 + newLine
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
+      let offsetPlusFive  = offset|>int
+      let o = offsetPlusFive + 5
+      let finalOffset = o|>string
+      let comment = "//pop temp " + offset + "\n"
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
-M=M-1
+A=M-1
 D=M\n")
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
-,"D=A\n")
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atoffsetPlusFive)
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@" + finalOffset + "\n")
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"M=D
 @SP
 M=M-1\n")
 
+
+
+
+      
+
+
+
 let pop_pointer0_offset(sourceReg, offset)=
     let register = sourceReg
     let offset0 = offset
-    let target = "@3"
     let comment = "//pop" + sourceReg + offset0  // //push (pointer) offset\n
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 A=M-1
 D=M\n")
-    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",target) 
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@3\n") 
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"M=D
  @SP
@@ -74,7 +77,6 @@ M=M-1\n")
 let pop_pointer1_offset(sourceReg, offset)=
    let register = sourceReg
    let offset0 = offset
-   let target = "@4"
    let newLine = "\n"
    let comment = "//pop" + sourceReg + offset0 + newLine // //push (pointer) offset\n
    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
@@ -82,7 +84,7 @@ let pop_pointer1_offset(sourceReg, offset)=
 ,"@SP
 A=M-1
 D=M\n")
-   File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",target) 
+   File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@4\n") //THAT
    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"M=D
 @SP
@@ -92,21 +94,18 @@ M=M-1\n")
 
   //pop static offset - pop #3
   let pop_static_offset(currentFileName:string, offset:string) = 
-    let newLine = "\n"
-    let fileName = currentFileName.ToString()
-    let offset1 = offset.ToString()
-    let dot = 
-    let comment = "//pop static " + offset1
-    let filepointoffset = fileName + "." + offset1
-    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
-    File.AppendAllLines("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+    let comment = "//pop static " + offset
+    let atFileName = "C:\Users\Shmuel Finson\Desktop\experiment.asm." + offset + "\n"
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
-A=M-1\n"
-    )
-    File.AppendAllLines("C:\Users\Shmuel Finson\Desktop\experiment.asm", filepointoffset)
-    File.AppendAllLines("C:\Users\Shmuel Finson\Desktop\experiment.asm"
-,"@SP
-A=M-1\n")
+M=M-1
+A=M
+D=M\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atFileName)
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","M=D\n")
+
+
+
    
 
   //pop constant offset - pop #4
@@ -129,14 +128,22 @@ M=M-1\n")
       let sourceReg = register
       let offset1 = offset.ToString()
       let newLine = "\n"
-      let comment = "//push " + sourceReg + " " + offset1 + newLine
+      let reg = match register with
+          |"local" ->  "LCL"
+          |"argument" ->  "ARG"
+          |"this" ->  "THIS"
+          |"that" ->  "THAT"
+
+      let comment = "//push " + reg + " " + offset1 + newLine
       let atReg = "@" + offset1
       let atSourceReg = "@" + sourceReg + newLine
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atReg)
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\nD=A\n")
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atSourceReg) //"@%s\n" register
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"\n
+D=A\n")
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@" + reg + "\n") //"@%s\n" register
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"A=M+D
 D=M
@@ -148,44 +155,38 @@ M=M+1")
 
   //push (temp) offset  - push #2
   let push_temp_offest(register:string, offset:string) = 
-      let sourceReg = register
-      let offset1 = offset
-      let offNum  = offset1 |>int
-      let target = 5 + offNum
-      let newLine = "\n"
-      let comment = "//push " + sourceReg + offset1 + newLine // //push (pointer\temp) offset\n
-      let atReg = "@" + sourceReg + newLine
-      let atOffset = "@" + offset1 + newLine
-      let attarget = "@" + target.ToString() + newLine
+      let comment = "//push temp " + offset + "\n"
+      let atOffset = "@" + offset + "\n"
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)  //printf "@(3/5)\n"??
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","D=A")
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",attarget)
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
-,"A=A+D
+,"D=A
+@5
+A=A+D
 D=M
 @SP
 A=M
 M=D
 @SP
-M=M+1")
+M=M+1\n")
+
+
+
 
 let push_pointer0_offset(register, offset) =
      let sourceReg = register
      let offset0 = offset
      let newLine = "\n"
-     let target = "@3"
      let comment = "//push " + sourceReg + offset0 + newLine // //push (pointer) offset\n
      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
-     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",target) 
+     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@3\n") //THIS
      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
-,
-"D=M
+,"D=M
  @SP
  A=M
  M=D
  @SP
- M=M+1")
+ M=M+1\n")
 
 
 
@@ -196,15 +197,14 @@ let push_pointer0_offset(register, offset) =
       let target = "@4"
       let comment = "//push " + sourceReg + offset0 + newLine // //push (pointer) offset\n
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",target) 
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@4\n") //THAT
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
-,
-"D=M
+,"D=M
  @SP
  A=M
  M=D
  @SP
- M=M+1")
+ M=M+1\n")
 
 
 
@@ -223,7 +223,7 @@ let push_pointer0_offset(register, offset) =
 A=M
 M=D
 @SP
-M=M+1")
+M=M+1\n")
 
 
   
@@ -354,7 +354,7 @@ let main argv =
               
        
     //read the file into a string
-    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\StackArithmetic\SimpleAdd\SimpleAdd.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
+    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\PointerTest\PointerTest.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
     // Convert file lines into a list.
     let commands = Seq.toList lines
 
