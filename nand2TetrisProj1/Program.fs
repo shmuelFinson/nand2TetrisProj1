@@ -9,7 +9,7 @@ open System.IO
       let offset1 = offset
       let reg = match register with
       |"local" ->  "LCL"
-      |"argument" ->  "ARG"
+      |"argument" ->  "ARG"נננ
       |"this" ->  "THIS"
       |"that" ->  "THAT"
 
@@ -18,7 +18,7 @@ open System.IO
       let atOffset = "@"+ offset1 + "\n" 
       let atRegister = "@" + reg + "\n"
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n")
-      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)
+      File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",comment)                                                                                                                                                                           
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@SP\n")
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","M=M-1\n")
       File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm",atOffset)
