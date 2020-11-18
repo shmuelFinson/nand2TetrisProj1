@@ -197,7 +197,7 @@ M=M+1\n")
 A=M
 M=D
 @SP
-M=M+1\n")
+M=\n")
 
       
 
@@ -220,6 +220,7 @@ M=M+1\n")
                   | "static" -> push_static_offset(offset)
                   |"temp" -> push_pointer_temp_offset(sourceReg, offset)
                   |"pointer" -> push_pointer_temp_offset(sourceReg, offset)
+                  | _ -> printf "%s" sourceReg
                 
 
      
@@ -240,7 +241,7 @@ M=M+1\n")
                   |"temp"-> pop_segement_pointer_temp(sourceReg,offset)
                   |"pointer" ->pop_segement_pointer_temp(sourceReg,offset)
                   | "static" -> pop_static_offset(sourceReg,offset)
-                  |_ ->  printf "Unknown\n"
+                  |_ ->printf "Unknown"
 
   //translate an add command into HACK
   let add_2_hack (lineOfCode:string) = 
@@ -392,7 +393,7 @@ M=M-1
 @SP
 A=M
 A=M
-D=D&A
+D=D+A
 @SP
 A=M
 M=D
@@ -439,7 +440,7 @@ let main argv =
               
        
     //read the file into a string
-    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\StackArithmetic\StackTest\StackTest.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
+    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.asm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
     // Convert file lines into a list.
     let commands = Seq.toList lines
 
@@ -458,7 +459,7 @@ let main argv =
              |"and" -> and_2_hack command
              |"or" -> or_2_hack command
              |"not" -> not_2_hack command
-             |_ ->  printf "%s" firstWord.[0]
+             |_ ->printf "Unknown"
         
     0 // return an integer exit code
 
