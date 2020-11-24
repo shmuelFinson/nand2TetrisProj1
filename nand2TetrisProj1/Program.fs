@@ -9,7 +9,7 @@ open System.IO
       let offset1 = offset
       let reg = match register with
       |"local" ->  "LCL"
-      |"argument" ->  "ARG"נננ
+      |"argument" ->  "ARG"
       |"this" ->  "THIS"
       |"that" ->  "THAT"
 
@@ -197,7 +197,7 @@ M=M+1\n")
 A=M
 M=D
 @SP
-M=\n")
+M=M+1\n")
 
       
 
@@ -220,7 +220,6 @@ M=\n")
                   | "static" -> push_static_offset(offset)
                   |"temp" -> push_pointer_temp_offset(sourceReg, offset)
                   |"pointer" -> push_pointer_temp_offset(sourceReg, offset)
-                  | _ -> printf "%s" sourceReg
                 
 
      
@@ -241,7 +240,7 @@ M=\n")
                   |"temp"-> pop_segement_pointer_temp(sourceReg,offset)
                   |"pointer" ->pop_segement_pointer_temp(sourceReg,offset)
                   | "static" -> pop_static_offset(sourceReg,offset)
-                  |_ ->printf "Unknown"
+                  |_ ->  printf "Unknown\n"
 
   //translate an add command into HACK
   let add_2_hack (lineOfCode:string) = 
@@ -250,18 +249,13 @@ M=\n")
 //add
 @SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
 @SP
 A=M
-A=M
-D=D+A
-@SP
-A=M
-M=D
+M=M+D
 @SP
 M=M+1\n")
 
@@ -274,18 +268,12 @@ M=M+1\n")
 //sub
 @SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
-@SP
 A=M
-A=M
-D=A-D
-@SP
-A=M
-M=D
+M=M-D
 @SP
 M=M+1\n")
 
@@ -293,91 +281,109 @@ M=M+1\n")
        File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"\n//neg
 @SP
-A=M-1
-D=M
-M=-D\n")
+M=M-1
+A=M
+M=-M
+@SP
+M=M+1\n")
 
-  let eq_2_hack(lineOfCode:string) = 
+  let eq_2_hack(eq_lab_num: int) = 
+    let num = eq_lab_num.ToString();
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n//eq\n")
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
+A=M
+
+D=M-D\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@inequal" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"D;JNE
 @SP
 A=M
+M=-1\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@end" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"0;JMP\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(inequal" + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 A=M
-D=D-A
-@L1
-D;JEQ
-@L2
-D=0;JEQ
-(L1)
-D=-1
-(L2)
-@SP
-A=M
-M=D
-@SP
+M=0\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(end" + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 M=M+1\n")
 
 
-let gt_2_hack(lineOfCode:string) = 
+let gt_2_hack(gt_lab_num: int) = 
+    let num = gt_lab_num.ToString();
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n//gt\n")
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
+A=M
+
+D=M-D\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@greater" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"D;JGT
 @SP
 A=M
+M=0\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@end" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","0;JMP\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(greater" + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 A=M
-D=A-D
-@L1
-D;JGT
-@L2
-D=0;JEQ
-(L1)
-D=-1
-(L2)
-@SP
-A=M
-M=D
-@SP
+M=-1\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(end"  + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 M=M+1\n")
 
-let lt_2_hack(lineOfCode:string) = 
+
+
+let lt_2_hack(lt_lab_num: int) = 
+    let num = lt_lab_num.ToString();
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n//lt\n")
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
+A=M\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","D=M-D\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@greater" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"D;JGE
 @SP
 A=M
+M=-1\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","@end" + num + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","0;JMP\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(greater" + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 A=M
-D=D-A
-@L1
-D;JGT
-@L2
-D=0;JEQ
-(L1)
-D=-1
-(L2)
-@SP
-A=M
-M=D
-@SP
+M=0\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","(end"  + num + ")" + "\n")
+    File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
+,"@SP
 M=M+1\n")
+
+
 
 
 let and_2_hack(lineOfCode:string) = 
@@ -385,18 +391,13 @@ let and_2_hack(lineOfCode:string) =
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
 @SP
 A=M
-A=M
-D=D+A
-@SP
-A=M
-M=D
+M=M&D
 @SP
 M=M+1\n")
 
@@ -405,18 +406,13 @@ let or_2_hack(lineOfCode:string) =
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
 M=M-1
-@SP
 A=M
 D=M
 @SP
 M=M-1
 @SP
 A=M
-A=M
-D=D|A
-@SP
-A=M
-M=D
+M=M|D
 @SP
 M=M+1\n")
 
@@ -424,9 +420,11 @@ let not_2_hack(lineOfCode:string) =
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm","\n//not\n")
     File.AppendAllText("C:\Users\Shmuel Finson\Desktop\experiment.asm"
 ,"@SP
-A=M-1
-D=M
-M=!D\n")
+M=M-1
+A=M
+M=!M
+@SP
+M=M+1\n")
 
 
 
@@ -440,10 +438,11 @@ let main argv =
               
        
     //read the file into a string
-    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.asm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
+    let lines = File.ReadAllLines(@"C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\StaticTest\StaticTest.vm") //C:\Users\Shmuel Finson\Desktop\עקרונות שפות תכנה\nand2tetris\projects\07\MemoryAccess\BasicTest\BasicTest.vm
     // Convert file lines into a list.
     let commands = Seq.toList lines
-
+    //initialize the labels for LT, GT,EQ to 0 - they will be incremented after every function call
+    let mutable counter = 2;
     //iterate over the lines in the file and call our functions for each line
     for command in commands do  //we have a string per line of code
         let firstWord = command.Split([|" "|], StringSplitOptions.None)  //get the first word in the string to determine what kind of command we're talking about
@@ -453,13 +452,20 @@ let main argv =
              |"add" -> add_2_hack command
              |"sub" -> sub_2_hack command
              |"neg" -> neg_2_hack command
-             |"eq" -> eq_2_hack command
-             |"lt" -> lt_2_hack command
-             |"gt" -> gt_2_hack command
+             |"eq" -> eq_2_hack counter ;counter <- counter + 3;
+             |"lt" -> lt_2_hack counter          ; counter <- counter + 3;
+             |"gt" -> gt_2_hack counter           ; counter <- counter + 3; 
              |"and" -> and_2_hack command
              |"or" -> or_2_hack command
              |"not" -> not_2_hack command
-             |_ ->printf "Unknown"
+             |_ ->  printf "%s" firstWord.[0]
+        
+        
+     
+       
+      
+
+
         
     0 // return an integer exit code
 
@@ -472,4 +478,3 @@ let main argv =
 
 
   
-
